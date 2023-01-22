@@ -92,6 +92,7 @@ server.post("/nova-entrada", async (req, res) => {
     const valor = req.body
     const { authorization } = req.headers
     const token = authorization?.replace("Bearer ", '')
+    const operacao = "adição"
   
     if (!token) return res.status(422).send("Informe o token!")
   
@@ -116,7 +117,7 @@ server.post("/nova-entrada", async (req, res) => {
       if (!checkSession) return res.status(401).send("Você não tem autorização para cadastrar um valor")
   
       const data = await db.collection("carteira").insertOne(
-        { valor: valor.valor, descricao: valor.descricao, idUsuario: checkSession.idUsuario })
+        { valor: valor.valor, descricao: valor.descricao, operacao, idUsuario: checkSession.idUsuario })
       console.log(data)
       res.send("ok")
   
@@ -130,6 +131,7 @@ server.post("/nova-entrada", async (req, res) => {
     const valor = req.body
     const { authorization } = req.headers
     const token = authorization?.replace("Bearer ", '')
+    const operacao = "subtração"
   
     if (!token) return res.status(422).send("Informe o token!")
   
@@ -146,8 +148,7 @@ server.post("/nova-entrada", async (req, res) => {
       })
       return res.status(422).send(erros)
     }
-  
-  
+
     try {
   
       const checkSession = await db.collection("sessoes").findOne({ token })
@@ -155,7 +156,7 @@ server.post("/nova-entrada", async (req, res) => {
       if (!checkSession) return res.status(401).send("Você não tem autorização para cadastrar um valor")
   
       const data = await db.collection("carteira").insertOne(
-        { valor: valor.valor, descricao: valor.descricao, idUsuario: checkSession.idUsuario })
+        { valor: valor.valor, descricao: valor.descricao,  operacao, idUsuario: checkSession.idUsuario })
       console.log(data)
       res.send("ok")
   
