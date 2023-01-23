@@ -1,5 +1,6 @@
 import { valorSchema } from "../model/ValorSchema.js"
 import db from "../config/database.js"
+import joi from "joi"
 
 
 export async function myWallet (req, res) {
@@ -15,6 +16,7 @@ export async function novaEntrada (req, res) {
     const valor = req.body
     const { authorization } = req.headers
     const token = authorization?.replace("Bearer ", '')
+    console.log(authorization);
     const operacao = "adição"
 
     if (!token) return res.status(422).send("Informe o token!")
@@ -40,7 +42,7 @@ export async function novaEntrada (req, res) {
     if (!checkSession) return res.status(401).send("Você não tem autorização para cadastrar um valor")
 
     const data = await db.collection("carteira").insertOne(
-        { valor: valor.valor, descricao: valor.descricao, operacao, idUsuario: checkSession.idUsuario })
+        { valor: valor.valor, descricao: valor.descricao, operacao, idUsuario: checkSession.idUsuario, created: new Date() })
     console.log(data)
     res.send("ok")
 
